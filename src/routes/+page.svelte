@@ -1,24 +1,14 @@
 <script lang="ts">
-
-	const TABLE_HEADER = ['ID', '価格','有・無'];
-	let nowRings = [
-		{ id: 101, price: 300,isPrice: true },
-		{ id: 202, price: 300,isPrice: false },
-		{ id: 303, price: 300,isPrice: true }
+	const TABLE_HEADER = ['ID', '価格', '有・無'];
+	let Items = [
+		{ id: 101, price: 300, isPrice: true },
+		{ id: 202, price: 300, isPrice: false },
+		{ id: 303, price: 300, isPrice: true }
 	];
 
-	const updatenowRingsisPrice = (id: number, isPrice: boolean) => {
-		nowRings = nowRings.map((ring) => {
-			if (ring.id === id) {
-				ring.isPrice = isPrice;
-			}
-			return ring;
-		});
-	};
-
-	const downLoadnowRingsAsCsv = () => {
+	const downLoadItemsAsCsv = () => {
 		const bom = new Uint8Array([0xef, 0xbb, 0xbf]);
-		const csv = nowRings.map((ring) => {
+		const csv = Items.map((ring) => {
 			return [ring.id, ring.price, ring.isPrice ? '有' : '無'].join(',');
 		});
 		csv.unshift(TABLE_HEADER.join(','));
@@ -26,12 +16,11 @@
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.href = url;
-		a.download = 'nowRings.csv';
+		a.download = 'Items.csv';
 		a.click();
 	};
 
-	$:console.log(nowRings);
-
+	$: console.log(Items);
 </script>
 
 <table>
@@ -41,24 +30,19 @@
 		{/each}
 	</tr>
 	<tbody>
-		{#each nowRings as ring}
+		{#each Items as ring}
 			<tr>
 				<td>{ring.id}</td>
 				<td><input type="number" bind:value={ring.price} /></td>
 				<td>
-					<input
-						type="checkbox"
-						bind:checked={ring.isPrice}
-						on:change={() => updatenowRingsisPrice(ring.id, ring.isPrice)}
-					/>
-					{ring.isPrice}</td
-				>
+					<input type="checkbox" bind:checked={ring.isPrice} />
+					{ring.isPrice}</td>
 			</tr>
 		{/each}
 	</tbody>
 </table>
 
-<button on:click={() => downLoadnowRingsAsCsv()}>CSVファイルとしてダウンロード</button>
+<button on:click={() => downLoadItemsAsCsv()}>CSVファイルとしてダウンロード</button>
 
 <style>
 	table {
@@ -67,7 +51,8 @@
 		border-spacing: 0;
 		margin: 100px auto;
 	}
-	table td,th {
+	table td,
+	th {
 		text-align: center;
 		border-left: 1px solid #a8b7c5;
 		border-top: none;
@@ -75,9 +60,10 @@
 		width: 200px;
 		padding: 10px 0;
 	}
-    th{
-        background-color: rgb(150, 255, 248);
-    }
+	th {
+		background-color: rgb(0, 0, 0);
+		color: white;
+	}
 
 	table td:last-child {
 		border-right: 1px solid #a8b7c5;
@@ -89,5 +75,9 @@
 
 	table tr:last-child td:last-child {
 		border-radius: 0 0 5px 0;
+	}
+	button {
+		display: block;
+		margin: 0 auto;
 	}
 </style>

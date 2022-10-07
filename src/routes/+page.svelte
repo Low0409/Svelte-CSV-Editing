@@ -1,9 +1,10 @@
 <script lang="ts">
-	const TABLE_HEADER = ['ID', '価格(有/無)'];
+
+	const TABLE_HEADER = ['ID', '価格','有・無'];
 	let nowRings = [
-		{ id: 101, isPrice: true },
-		{ id: 202, isPrice: false },
-		{ id: 303, isPrice: true }
+		{ id: 101, price: 300,isPrice: true },
+		{ id: 202, price: 300,isPrice: false },
+		{ id: 303, price: 300,isPrice: true }
 	];
 
 	const updatenowRingsisPrice = (id: number, isPrice: boolean) => {
@@ -16,8 +17,21 @@
 	};
 
 	const downLoadnowRingsAsCsv = () => {
-		console.log(nowRings);
+		const bom = new Uint8Array([0xef, 0xbb, 0xbf]);
+		const csv = nowRings.map((ring) => {
+			return [ring.id, ring.price, ring.isPrice ? '有' : '無'].join(',');
+		});
+		csv.unshift(TABLE_HEADER.join(','));
+		const blob = new Blob([bom, csv.join('\r\n')], { type: 'text/csv' });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'nowRings.csv';
+		a.click();
 	};
+
+	$:console.log(nowRings);
+
 </script>
 
 <table>
@@ -30,6 +44,7 @@
 		{#each nowRings as ring}
 			<tr>
 				<td>{ring.id}</td>
+				<td><input type="number" bind:value={ring.price} /></td>
 				<td>
 					<input
 						type="checkbox"
@@ -43,11 +58,11 @@
 	</tbody>
 </table>
 
-<button on:click={() => downLoadnowRingsAsCsv()}>CSVファイルとして保存</button>
+<button on:click={() => downLoadnowRingsAsCsv()}>CSVファイルとしてダウンロード</button>
 
 <style>
 	table {
-		max-width: 800px;
+		max-width: 900px;
 		border-collapse: separate;
 		border-spacing: 0;
 		margin: 100px auto;
@@ -57,7 +72,7 @@
 		border-left: 1px solid #a8b7c5;
 		border-top: none;
 		box-shadow: 5px -3px 5px 1px #eee inset;
-		width: 25%;
+		width: 200px;
 		padding: 10px 0;
 	}
     th{
